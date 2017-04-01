@@ -187,7 +187,7 @@ class MailBot:
         print "login successed, enter loop"
         while self.run:
             self.ReplyMsg = ''
-            print "get command, time=",time.localtime()
+            print '[' + time.ctime() + '] '+ "get command"
             cmds = self.GetMailCommands()
             for cmd,param in cmds:
                 self.ExecuteCommand(cmd,param)
