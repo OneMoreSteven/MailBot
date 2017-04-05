@@ -57,6 +57,7 @@ class MailBot:
         self.MailFolder = ''
 
         self.ReplyMsg = ''
+        self.DecodeCharset = ''
 
         self.EnabledService = ['SetIntervalMin']
         
@@ -193,6 +194,8 @@ class MailBot:
                 self.ExecuteCommand(cmd,param)
 
             if len(self.ReplyMsg) > 0:
+                if len(self.DecodeCharset) > 0:
+                    self.ReplyMsg = self.ReplyMsg.decode(self.DecodeCharset).encode('utf-8')
                 self.ReplyMail(self.ReplyMsg)
 
             print 'sleep ', self.IntervalSec
