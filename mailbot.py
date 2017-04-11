@@ -62,6 +62,12 @@ class MailBot:
         self.EnabledService = ['SetIntervalMin']
         
 
+    def Sleep(self,SlpSec):
+        print 'Sleep %d secs' % (SlpSec)
+        for a in range(0,SlpSec,1):
+            if self.run:
+                time.sleep(1)
+
     def SetPassword(self,password):
         "Set password for loggin"
         self.__password = password
