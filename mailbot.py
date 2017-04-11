@@ -55,6 +55,8 @@ class MailBot:
         self.CommandMailTitle = ''
         self.ReplyMailTitle = ''
         self.MailFolder = ''
+        self.RetryCount = 3
+        self.RetryItvSec = 60
 
         self.ReplyMsg = ''
         self.DecodeCharset = ''
@@ -102,6 +104,11 @@ class MailBot:
 
 
     def GetMail(self):
+        """
+            Get mail from server
+            GetMail() => (ConnectSuccess,Mail)
+        """
+        text = ''
         try:
             imap = imaplib.IMAP4_SSL(self.IMAP_Server)
             print imap.login(self.user,self.__password)
@@ -115,11 +122,13 @@ class MailBot:
                 typ,content=imap.fetch(int(mails[0]), '(RFC822)')
                 imap.logout()
                 print typ
-                return content[0][1]
-        except:
-            print 'get mail failed'
-        return ''
-        
+                text = content[0][1]
+        except Exception as e:
+            print 'get mail failed: [%s] %s'%(type(e).__name__,e.message)
+            return False,''
+
+        return True,text
+
 
     def GetStringCommands(self,s):
         lines = s.splitlines()
@@ -133,13 +142,13 @@ class MailBot:
         return cmds
 
     def GetMailCommands(self):
-        mail = self.GetMail()
-        if len(mail) == 0:
-            return []
+        CnSuc,mail = self.GetMail()
+        if not CnSuc:
+            return False,[]
         mail_cont = GetPlainTextFromMail(mail)
         if len(mail_cont) == 0:
-            return []
-        return self.GetStringCommands(mail_cont)
+            return True,[]
+        return True,self.GetStringCommands(mail_cont)
 
     def GetInputCommands(self):
         print 'input command'
@@ -194,8 +203,15 @@ class MailBot:
         print "login successed, enter loop"
         while self.run:
             self.ReplyMsg = ''
-            print '[' + time.ctime() + '] '+ "get command"
-            cmds = self.GetMailCommands()
+
+            for a in range(0,self.RetryCount):
+                print '[%s] get command' % (time.ctime())
+                CnSuc,cmds = self.GetMailCommands()
+                if CnSuc:
+                    break
+                print 'GetMail failed, retry count', a
+                self.Sleep(self.RetryItvSec)
+
             for cmd,param in cmds:
                 self.ExecuteCommand(cmd,param)
 
