@@ -204,8 +204,5 @@ class MailBot:
                     self.ReplyMsg = self.ReplyMsg.decode(self.DecodeCharset).encode('utf-8')
                 self.ReplyMail(self.ReplyMsg)
 
-            print 'sleep ', self.IntervalSec
-            for a in range(0,self.IntervalSec,1):
-                if self.run:
-                    time.sleep(1)
-            
+            self.Sleep(self.IntervalSec)
+
