@@ -194,6 +194,9 @@ class MailBot:
             pass
         return False
 
+    def ExtraWork(self):
+        pass
+
     def Run(self):
         "Start the bot, all initialization must be done before this function"
         if self.TryLogin() == False:
@@ -220,5 +223,6 @@ class MailBot:
                     self.ReplyMsg = self.ReplyMsg.decode(self.DecodeCharset).encode('utf-8')
                 self.ReplyMail(self.ReplyMsg)
 
+            self.ExtraWork()
             self.Sleep(self.IntervalSec)
 
