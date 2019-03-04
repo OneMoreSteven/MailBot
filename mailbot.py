@@ -217,12 +217,12 @@ class MailBot:
 
             for cmd,param in cmds:
                 self.ExecuteCommand(cmd,param)
+            self.ExtraWork()
 
             if len(self.ReplyMsg) > 0:
                 if len(self.DecodeCharset) > 0:
                     self.ReplyMsg = self.ReplyMsg.decode(self.DecodeCharset).encode('utf-8')
                 self.ReplyMail(self.ReplyMsg)
 
-            self.ExtraWork()
             self.Sleep(self.IntervalSec)
 
